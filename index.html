@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Readability Score – Check Text Reading Level & Flesch Score</title>
+  <meta name="description" content="Free readability checker. Analyze your text's reading level using Flesch-Kincaid, Gunning Fog, and SMOG scores. Improve your writing instantly." />
+  <meta name="keywords" content="readability score, flesch kincaid, reading level checker, readability test, gunning fog index, SMOG index, reading ease score" />
+  <link rel="canonical" href="https://readability.quickutils.tools/" />
+  <meta property="og:title" content="Readability Score Checker" />
+  <meta property="og:description" content="Check your text reading level with Flesch-Kincaid, Gunning Fog, and SMOG scores. Free and instant." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://readability.quickutils.tools/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8872742474601337" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FFFEF9; --white: #FFFFFF; --border: #E8E4D8;
+      --ink: #1A1612; --ink-mid: #4A4238; --ink-light: #8A7D6A;
+      --amber: #B45309; --amber-light: #FEF3C7; --amber-border: #FCD34D;
+      --teal: #0D6B5E; --teal-light: #E0F0EE;
+      --radius: 8px; --radius-lg: 14px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+    .ad-banner-top { background: var(--white); border-bottom: 1px solid var(--border); text-align: center; padding: 8px 16px; font-size: 11px; color: var(--ink-light); letter-spacing: .08em; text-transform: uppercase; }
+    header { background: var(--ink); color: #FAF7F0; padding: 52px 24px 44px; text-align: center; }
+    .header-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #D4A853; margin-bottom: 16px; }
+    header h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+    header h1 em { font-style: italic; color: #D4A853; font-weight: 400; }
+    header p { font-size: 1rem; color: #8A7D6A; max-width: 440px; margin: 0 auto; font-weight: 300; line-height: 1.7; }
+    main { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    /* TEXTAREA */
+    .input-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
+    .input-header { padding: 14px 20px 0; display: flex; justify-content: space-between; align-items: center; }
+    .input-label { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-light); }
+    .clear-btn { padding: 5px 12px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink-light); cursor: pointer; }
+    .clear-btn:hover { background: var(--amber-light); }
+    textarea { width: 100%; min-height: 200px; padding: 14px 20px; font-family: 'Lora', serif; font-size: 1rem; line-height: 1.8; border: none; background: transparent; color: var(--ink); outline: none; resize: vertical; }
+    textarea::placeholder { color: var(--border); font-style: italic; }
+    .input-footer { padding: 10px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-light); }
+    .input-footer span { font-family: 'DM Mono', monospace; }
+
+    /* SCORES GRID */
+    .scores-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .score-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; text-align: center; }
+    .score-card.primary { background: var(--ink); color: #FAF7F0; }
+    .score-name { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 8px; }
+    .score-card.primary .score-name { color: #8A7D6A; }
+    .score-value { font-family: 'DM Mono', monospace; font-size: 2.2rem; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 4px; }
+    .score-card.primary .score-value { color: #D4A853; }
+    .score-label { font-size: 12px; color: var(--ink-light); }
+    .score-card.primary .score-label { color: #8A7D6A; }
+
+    /* GRADE BADGE */
+    .grade-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; margin-top: 8px; }
+    .grade-easy { background: #DCFCE7; color: #15803D; }
+    .grade-medium { background: var(--amber-light); color: var(--amber); }
+    .grade-hard { background: #FEE2E2; color: #B91C1C; }
+
+    /* DETAIL STATS */
+    .detail-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+    .detail-title { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .detail-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+    .detail-item-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 4px; }
+    .detail-item-value { font-family: 'DM Mono', monospace; font-size: 1.1rem; font-weight: 500; color: var(--ink); }
+
+    /* SUGGESTIONS */
+    .suggestions-card { background: var(--amber-light); border: 1px solid var(--amber-border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; display: none; }
+    .suggestions-card.show { display: block; }
+    .suggestions-title { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; color: var(--amber); margin-bottom: 12px; }
+    .suggestion-item { font-size: 13px; color: var(--ink-mid); margin-bottom: 8px; display: flex; gap: 8px; }
+    .suggestion-item::before { content: '→'; color: var(--amber); flex-shrink: 0; }
+
+    /* SHARE */
+    .utility-bar { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .utility-bar-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-light); width: 100%; margin-bottom: 4px; }
+    .share-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 20px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border); text-decoration: none; transition: opacity .15s, transform .1s; color: white; }
+    .share-btn:hover { opacity: .85; transform: translateY(-1px); }
+    .share-btn.tw { background: #000; border-color: #000; }
+    .share-btn.fb { background: #1877F2; border-color: #1877F2; }
+    .share-btn.wa { background: #25D366; border-color: #25D366; color: #000; }
+    .share-btn.rd { background: #FF4500; border-color: #FF4500; }
+    .share-btn.cl { background: transparent; color: var(--ink-light); border-color: var(--border); }
+    .share-btn.cl.copied { border-color: var(--teal); color: var(--teal); }
+    .bookmark-tip { width: 100%; font-size: 12px; color: var(--ink-light); margin-top: 4px; }
+    .bookmark-tip kbd { background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink); }
+
+    .related-section { margin-bottom: 16px; }
+    .related-section h2 { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+    .related-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-decoration: none; display: block; transition: border-color .15s; }
+    .related-card:hover { border-color: var(--amber); }
+    .related-card-emoji { font-size: 1.3rem; margin-bottom: 6px; }
+    .related-card-title { font-size: .85rem; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+    .related-card-desc { font-size: 11px; color: var(--ink-light); }
+
+    .embed-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .embed-section h3 { font-size: 11px; color: var(--ink-light); margin-bottom: 10px; letter-spacing: .05em; text-transform: uppercase; }
+    .embed-code { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink-light); word-break: break-all; margin-bottom: 10px; line-height: 1.6; }
+    .embed-copy-btn { padding: 7px 16px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink-light); cursor: pointer; transition: all .12s; }
+    .embed-copy-btn:hover { border-color: var(--amber); color: var(--amber); }
+    .embed-copy-btn.copied { border-color: var(--teal); color: var(--teal); }
+
+    .ad-inline { background: var(--white); border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 16px; text-align: center; color: var(--ink-light); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; min-height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+
+    .content-section { margin-bottom: 16px; }
+    .content-section h2 { font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 600; color: var(--ink); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .faq-item { margin-bottom: 20px; }
+    .faq-item h3 { font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+    .faq-item p { font-size: .9rem; color: var(--ink-light); margin: 0; line-height: 1.65; }
+
+    footer { background: var(--ink); color: #8A7D6A; text-align: center; padding: 32px 24px; font-size: 13px; margin-top: 48px; }
+    footer a { color: #D4A853; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    footer .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="ad-banner-top">Advertisement</div>
+  <header>
+    <p class="header-eyebrow">Free Writing Tool</p>
+    <h1>Readability<br><em>Score Checker</em></h1>
+    <p>Paste your text to instantly see reading level, Flesch-Kincaid score, Gunning Fog index, and writing improvement suggestions.</p>
+  </header>
+  <main>
+
+    <!-- INPUT -->
+    <div class="input-card">
+      <div class="input-header">
+        <span class="input-label">Your text</span>
+        <button class="clear-btn" onclick="clearText()">Clear</button>
+      </div>
+      <textarea id="text-input" placeholder="Paste your article, essay, email, or any text here to check its readability..." oninput="analyze()"></textarea>
+      <div class="input-footer">
+        <span id="word-count-label">0 words · 0 sentences</span>
+        <span id="char-count-label">0 characters</span>
+      </div>
+    </div>
+
+    <!-- SCORES -->
+    <div class="scores-grid" id="scores-grid" style="display:none">
+      <div class="score-card primary">
+        <div class="score-name">Flesch Reading Ease</div>
+        <div class="score-value" id="s-fre">—</div>
+        <div class="score-label" id="s-fre-label"></div>
+        <div id="s-fre-badge"></div>
+      </div>
+      <div class="score-card">
+        <div class="score-name">Flesch-Kincaid Grade</div>
+        <div class="score-value" id="s-fkg">—</div>
+        <div class="score-label">US grade level</div>
+      </div>
+      <div class="score-card">
+        <div class="score-name">Gunning Fog</div>
+        <div class="score-value" id="s-fog">—</div>
+        <div class="score-label">Years of education</div>
+      </div>
+      <div class="score-card">
+        <div class="score-name">SMOG Index</div>
+        <div class="score-value" id="s-smog">—</div>
+        <div class="score-label">Grade level</div>
+      </div>
+    </div>
+
+    <!-- DETAIL STATS -->
+    <div class="detail-card" id="detail-card" style="display:none">
+      <div class="detail-title">Text statistics</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-item-label">Words</div><div class="detail-item-value" id="d-words">0</div></div>
+        <div class="detail-item"><div class="detail-item-label">Sentences</div><div class="detail-item-value" id="d-sents">0</div></div>
+        <div class="detail-item"><div class="detail-item-label">Syllables</div><div class="detail-item-value" id="d-sylls">0</div></div>
+        <div class="detail-item"><div class="detail-item-label">Avg words/sent</div><div class="detail-item-value" id="d-wps">0</div></div>
+        <div class="detail-item"><div class="detail-item-label">Avg syllables/word</div><div class="detail-item-value" id="d-spw">0</div></div>
+        <div class="detail-item"><div class="detail-item-label">Complex words</div><div class="detail-item-value" id="d-complex">0</div></div>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="suggestions-card" id="suggestions-card">
+      <div class="suggestions-title">💡 Suggestions to improve readability</div>
+      <div id="suggestions-list"></div>
+    </div>
+
+    <!-- SHARE -->
+    <div class="utility-bar">
+      <span class="utility-bar-label">Share this tool:</span>
+      <a class="share-btn tw" id="sh-tw" href="#" target="_blank" rel="noopener">𝕏 Twitter</a>
+      <a class="share-btn fb" id="sh-fb" href="#" target="_blank" rel="noopener">Facebook</a>
+      <a class="share-btn wa" id="sh-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="share-btn rd" id="sh-rd" href="#" target="_blank" rel="noopener">Reddit</a>
+      <button class="share-btn cl" id="sh-cl" onclick="copyLink()">Copy link</button>
+      <div class="bookmark-tip" id="bookmark-text">Press <kbd>Ctrl+D</kbd> to bookmark this tool.</div>
+    </div>
+
+    <div class="related-section">
+      <h2>More free tools</h2>
+      <div class="related-grid" id="related-tools-grid"></div>
+    </div>
+
+    <div class="embed-section">
+      <h3>Embed this tool on your site</h3>
+      <p style="font-size:12px;color:var(--ink-light);margin-bottom:10px;">Free to embed. Includes a "Powered by quickutils.tools" link.</p>
+      <div class="embed-code">&lt;iframe src="https://readability.quickutils.tools/?embed=1" width="100%" height="600" frameborder="0" title="Readability Score Checker — quickutils.tools"&gt;&lt;/iframe&gt;</div>
+      <button class="embed-copy-btn" onclick="copyEmbed(this)">Copy embed code</button>
+    </div>
+
+    <div class="ad-inline">Advertisement · 728×90</div>
+
+    <div class="content-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>What is a good Flesch Reading Ease score?</h3>
+        <p>Flesch Reading Ease scores range from 0–100. <strong>60–70</strong> is ideal for most web content — it's understood by 13–15 year olds and is comfortable for the average adult. Higher scores are easier; lower scores are harder. Academic papers often score 30–50.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does Flesch-Kincaid Grade Level mean?</h3>
+        <p>The Flesch-Kincaid Grade Level corresponds to a US school grade. A score of 8 means an 8th grader can understand the text. Most popular novels score around 6–8. News articles typically target grade 8–10.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the Gunning Fog Index?</h3>
+        <p>The Gunning Fog Index estimates the years of formal education needed to understand the text on first reading. A score of 12 corresponds to a US high school senior. Most business writing should aim for 10–12.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How do I improve my readability score?</h3>
+        <p>Use shorter sentences (aim for 15–20 words average), choose simpler words over complex ones, break long paragraphs into shorter ones, and use active voice. The suggestions panel above gives specific advice based on your text.</p>
+      </div>
+    </div>
+
+  </main>
+  <footer>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="https://quickutils.tools/contact.html">Contact</a>
+      <a href="https://quickutils.tools">All Tools</a>
+    </div>
+    <p>&copy; 2026 <a href="https://quickutils.tools">quickutils.tools</a> — Text processed in your browser. Nothing stored.</p>
+  </footer>
+
+  <script>
+    const TOOL_URL = 'https://readability.quickutils.tools/';
+    const SHARE_MSG = encodeURIComponent('Free readability checker — Flesch-Kincaid, Gunning Fog, SMOG scores instantly: ' + TOOL_URL);
+    const ENC_URL = encodeURIComponent(TOOL_URL);
+
+    const isMac = /mac/i.test(navigator.platform);
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isAndroid = /android/i.test(navigator.userAgent);
+    if (isIOS) document.getElementById('bookmark-text').innerHTML = '🔖 Tap share (↑) then "Add to Home Screen".';
+    else if (isAndroid) document.getElementById('bookmark-text').innerHTML = '🔖 Tap menu (⋮) then "Add to Home Screen".';
+    else if (isMac) document.getElementById('bookmark-text').innerHTML = 'Press <kbd>Cmd+D</kbd> to bookmark.';
+
+    document.getElementById('sh-tw').href = `https://twitter.com/intent/tweet?text=${SHARE_MSG}`;
+    document.getElementById('sh-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${ENC_URL}`;
+    document.getElementById('sh-wa').href = `https://wa.me/?text=${SHARE_MSG}`;
+    document.getElementById('sh-rd').href = `https://www.reddit.com/submit?url=${ENC_URL}&title=${encodeURIComponent('Free readability checker — Flesch-Kincaid, Gunning Fog, SMOG')}`;
+
+    function copyLink() {
+      navigator.clipboard.writeText(TOOL_URL).then(() => {
+        const btn = document.getElementById('sh-cl');
+        btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+    function copyEmbed(btn) {
+      navigator.clipboard.writeText(document.querySelector('.embed-code').textContent).then(() => {
+        btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy embed code'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function countSyllables(word) {
+      word = word.toLowerCase().replace(/[^a-z]/g, '');
+      if (!word) return 0;
+      if (word.length <= 3) return 1;
+      word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+      word = word.replace(/^y/, '');
+      const m = word.match(/[aeiouy]{1,2}/g);
+      return m ? m.length : 1;
+    }
+
+    function analyze() {
+      const text = document.getElementById('text-input').value.trim();
+      const words = text ? text.split(/\s+/).filter(w => w.length > 0) : [];
+      const wc = words.length;
+      const cc = text.length;
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+      const sc = Math.max(1, sentences.length);
+
+      document.getElementById('word-count-label').textContent = `${wc} words · ${sc} sentences`;
+      document.getElementById('char-count-label').textContent = `${cc} characters`;
+
+      if (wc < 10) {
+        document.getElementById('scores-grid').style.display = 'none';
+        document.getElementById('detail-card').style.display = 'none';
+        document.getElementById('suggestions-card').classList.remove('show');
+        return;
+      }
+
+      const syllables = words.reduce((acc, w) => acc + countSyllables(w), 0);
+      const complexWords = words.filter(w => countSyllables(w) >= 3).length;
+      const avgWps = (wc / sc).toFixed(1);
+      const avgSpw = (syllables / wc).toFixed(2);
+
+      // Flesch Reading Ease
+      const fre = Math.round(206.835 - 1.015 * (wc / sc) - 84.6 * (syllables / wc));
+      const freC = Math.max(0, Math.min(100, fre));
+
+      // Flesch-Kincaid Grade
+      const fkg = Math.max(0, +(0.39 * (wc / sc) + 11.8 * (syllables / wc) - 15.59).toFixed(1));
+
+      // Gunning Fog
+      const fog = +(0.4 * ((wc / sc) + 100 * (complexWords / wc))).toFixed(1);
+
+      // SMOG
+      const smog = sc >= 30 ? +(1.0430 * Math.sqrt(complexWords * (30 / sc)) + 3.1291).toFixed(1) : '—';
+
+      // Display
+      document.getElementById('scores-grid').style.display = 'grid';
+      document.getElementById('detail-card').style.display = 'block';
+
+      document.getElementById('s-fre').textContent = freC;
+      document.getElementById('s-fkg').textContent = fkg;
+      document.getElementById('s-fog').textContent = fog;
+      document.getElementById('s-smog').textContent = smog;
+
+      let freLabel, freClass;
+      if (freC >= 90) { freLabel = 'Very Easy'; freClass = 'grade-easy'; }
+      else if (freC >= 70) { freLabel = 'Easy'; freClass = 'grade-easy'; }
+      else if (freC >= 60) { freLabel = 'Standard'; freClass = 'grade-medium'; }
+      else if (freC >= 50) { freLabel = 'Fairly Difficult'; freClass = 'grade-medium'; }
+      else if (freC >= 30) { freLabel = 'Difficult'; freClass = 'grade-hard'; }
+      else { freLabel = 'Very Difficult'; freClass = 'grade-hard'; }
+
+      document.getElementById('s-fre-label').textContent = freLabel;
+      document.getElementById('s-fre-badge').innerHTML = `<span class="grade-badge ${freClass}">${freLabel}</span>`;
+
+      document.getElementById('d-words').textContent = wc.toLocaleString();
+      document.getElementById('d-sents').textContent = sc.toLocaleString();
+      document.getElementById('d-sylls').textContent = syllables.toLocaleString();
+      document.getElementById('d-wps').textContent = avgWps;
+      document.getElementById('d-spw').textContent = avgSpw;
+      document.getElementById('d-complex').textContent = complexWords.toLocaleString();
+
+      // Suggestions
+      const suggestions = [];
+      if (parseFloat(avgWps) > 20) suggestions.push('Your average sentence length is high (' + avgWps + ' words). Try breaking long sentences into shorter ones — aim for 15–20 words per sentence.');
+      if (complexWords / wc > 0.15) suggestions.push(`${Math.round(complexWords/wc*100)}% of your words are complex (3+ syllables). Replace some with simpler alternatives to improve readability.`);
+      if (freC < 60) suggestions.push('Your Flesch Reading Ease score is below 60. Consider using shorter words and sentences to make the text more accessible.');
+      if (fkg > 12) suggestions.push('Your Flesch-Kincaid grade level is ' + fkg + ' (college level). Most online readers prefer grade 8–10 content.');
+
+      const sc2 = document.getElementById('suggestions-card');
+      if (suggestions.length > 0) {
+        sc2.classList.add('show');
+        document.getElementById('suggestions-list').innerHTML = suggestions.map(s => `<div class="suggestion-item">${s}</div>`).join('');
+      } else {
+        sc2.classList.remove('show');
+      }
+    }
+
+    function clearText() {
+      document.getElementById('text-input').value = '';
+      analyze();
+    }
+
+    if (new URLSearchParams(window.location.search).get('embed') === '1') {
+      document.querySelector('.ad-banner-top').style.display = 'none';
+      document.querySelector('header').style.display = 'none';
+      document.querySelector('.related-section') && (document.querySelector('.related-section').style.display = 'none');
+      document.querySelector('.embed-section') && (document.querySelector('.embed-section').style.display = 'none');
+      document.querySelector('.content-section') && (document.querySelector('.content-section').style.display = 'none');
+      document.querySelector('.ad-inline') && (document.querySelector('.ad-inline').style.display = 'none');
+      document.querySelector('footer').innerHTML = '<div style="text-align:center;padding:12px;font-size:12px;font-family:sans-serif;color:#8A7D6A;">Powered by <a href="https://quickutils.tools" target="_blank" style="color:#B45309;text-decoration:none;font-weight:500;">quickutils.tools</a></div>';
+    }
+  </script>
+  <script src="https://quickutils.tools/tools.js" onload="renderRelatedTools({currentUrl:'https://readability.quickutils.tools/'})"></script>
+</body>
+</html>
